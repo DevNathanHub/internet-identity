@@ -1,19 +1,37 @@
-// App.jsx
-import React, { useEffect } from 'react';
-import { initializeAuth } from './Auth/auth';
-import Guest from './Guest';
+import React, { useEffect, useState } from 'react';
+import DegreePreview from './DegreePreview';
+import DegreeSearch from './DegreeSearch';
+import mockDegrees from './mockDegrees';
+import AddDegree from './AddDegree';
+import  { initializeAuth } from './Auth/auth';
+const App = () => {
+  const principal = "institution-principal";
 
-function App() {
+  
+  const [selectedDegree, setSelectedDegree] = useState(null);
+
+  const handleSearch = (searchTerm) => {
+    const foundDegree = mockDegrees.find(
+      (degree) => degree.studentID === searchTerm || degree.principal === searchTerm
+    );
+    setSelectedDegree(foundDegree);
+  };
   useEffect(() => {
     initializeAuth();
   }, []);
 
   return (
     <div>
-      <h1>Cert Block</h1>
-      <Guest/>
+      <h1>Degree Management System</h1>
+      <DegreeSearch onSearch={handleSearch} />
+      {selectedDegree ? (
+        <DegreePreview degree={selectedDegree} />
+      ) : (
+        <p>No degree found for the provided search term.</p>
+      )}
+      <AddDegree principal={principal}/>
     </div>
   );
-}
+};
 
 export default App;
